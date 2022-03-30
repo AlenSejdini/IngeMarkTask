@@ -50,13 +50,16 @@ public class ProductService {
         if (product.getCode().length() != 10) {
             throw new IllegalStateException("Product code length must be 10 characters.");
         }
-        //dohvatiti iz gornnje metode zadnju vrijednost tcaja
+
+        if(product.getPrice_hrk()< 0 || product.getPrice_eur()< 0){
+            throw new IllegalStateException("Price in kunas and Euros must be equal to or greater than 0 or equal to 0.");
+        }
+        //Grabbing the value of get euros method and storing it to a double
         double kunaValue = getEuros();
+        //using math.round to get the value down to two decimal places
         double euroPrice = Math.round((product.getPrice_hrk() / kunaValue) * 100.0) / 100.0;
         product.setPrice_eur(euroPrice);
-        System.out.println(kunaValue);
-        //uzet iz producta vrijednos u kunma i pomnoziti sa zadnjim tecajem
-        //dodati to u product objekt i spremiti u bazu
+
         Optional<Product> productOptional = productRepository
                 .findProductByCode(product.getCode());
         if (productOptional.isPresent()) {
